@@ -1,0 +1,39 @@
+// rendered via https://nomnoml.com/
+[<package> json|
+
+	[<abstract> Value|
+    [<abstract> Visitor||
+    visit(Array)
+    visit(Object)
+    visit(String)
+    visit(Number)
+    visit(Boolean)
+    visit(Null)
+    ]
+	|
+	  accept(Visitor)
+	]
+
+	[Array||
+	  forEach(Consumer<Value>)]
+	[Array] --:> [Value]
+	[Array] +-> * values [Value]
+
+	[Object||
+	  forEach(BiConsumer<String,Value>)
+	]
+	[Object] --:> [Value]
+	[Object] +-> * members [Member]
+
+	[Member] +-> [String]
+	[Member] +-> [Value]
+
+	[String] --:> [Value]
+
+	[Number] --:> [Value]
+
+	[Boolean] --:> [Value]
+
+	[Null] --:> [Value]
+
+]

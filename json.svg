@@ -1,0 +1,275 @@
+<svg version="1.1" baseProfile="full" width="848.3" height="697.0" viewbox="0 0 848.25 697" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ev="http://www.w3.org/2001/xml-events">
+		<desc >// rendered via https://nomnoml.com/
+	[&lt;package&gt; json|
+	
+		[&lt;abstract&gt; Value|
+	    [&lt;abstract&gt; Visitor||
+	    visit(Array)
+	    visit(Object)
+	    visit(String)
+	    visit(Number)
+	    visit(Boolean)
+	    visit(Null)
+	    ]
+		|
+		  accept(Visitor)
+		]
+	
+		[Array||
+		  forEach(Consumer&lt;Value&gt;)]
+		[Array] --:&gt; [Value]
+		[Array] +-&gt; * values [Value]
+	
+		[Object||
+		  forEach(BiConsumer&lt;String,Value&gt;)
+		]
+		[Object] --:&gt; [Value]
+		[Object] +-&gt; * members [Member]
+	
+		[Member] +-&gt; [String]
+		[Member] +-&gt; [Value]
+	
+		[String] --:&gt; [Value]
+	
+		[Number] --:&gt; [Value]
+	
+		[Boolean] --:&gt; [Value]
+	
+		[Null] --:&gt; [Value]
+	
+	]
+	</desc>
+	<g stroke-width="1.0" text-align="left" font="12pt Helvetica, Arial, sans-serif" font-size="12pt" font-family="Helvetica" font-weight="bold" font-style="normal">
+			<g font-family="Helvetica" font-size="12pt" font-weight="bold" font-style="normal" stroke-width="3.0" stroke-linejoin="round" stroke-linecap="round" stroke="#33322E">
+				<g stroke="transparent" fill="transparent">
+					<rect x="0.0" y="0.0" height="697.0" width="848.3" stroke="none"></rect>
+				</g>
+			<g transform="translate(8, 8)" fill="#33322E">
+					<g transform="translate(20, 20)">
+						<g data-name="json">
+							<g fill="#eee8d5" stroke="#33322E" data-name="json">
+								<rect x="0.0" y="31.0" height="610.0" width="792.3" data-name="json"></rect>
+							<path d="M0.0 31.0 L0.0 0.0 L48.9 0.0 L48.9 31.0 Z" data-name="json"></path>
+							<path d="M0.0 31.0 L792.3 31.0" fill="none" data-name="json"></path>
+							</g>
+						<g transform="translate(0, 0)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="json">
+								<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="json">
+									<text x="0.0" y="13.5" stroke="none" data-name="json">json</text>
+								
+								</g>
+							</g>
+						<g transform="translate(0, 31)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="json">
+								<g transform="translate(8, 8)" fill="#33322E" data-name="json">
+									<g transform="translate(20, 20)" fill="#eee8d5" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="json">
+										<g stroke-dasharray="6 6" data-name="json">
+											<path d="M94.3 251.0 L87 271 L252.71022833276226 366.9125103817134 L252.7 366.9 " fill="none" data-name="json"></path>
+										</g>
+									<path d="M250.0 371.5 L252.7 366.9 L255.4 362.3 L264.3 373.6 Z" data-name="json"></path>
+									<text x="272.3" y="346.5" stroke="none" data-name="json">* values</text>
+									<path d="M154.1 264.4 L160.5 271 L259.0563422643796 350.31625951157247 L259.1 350.3 " fill="none" data-name="json"></path>
+									<path d="M250.5 350.3 L259.1 350.3 L257.2 342.0 L264.3 354.5 Z" data-name="json"></path>
+									<g fill="#33322E" data-name="json">
+											<path d="M151.4 254.0 L154.1 264.4 L143.7 261.4 L141.0 251.0 Z" data-name="json"></path>
+										</g>
+									<g stroke-dasharray="6 6" data-name="json">
+											<path d="M274.2 70.0 L254 90 L254 125.5 L254 125.5 L254 161 L254 161 L254 216 L254 216 L254 271 L254 271 L259.43824500813633 279.69545244045014 L259.4 279.7 " fill="none" data-name="json"></path>
+										</g>
+									<path d="M254.9 282.5 L259.4 279.7 L264.0 276.9 L266.5 291.0 Z" data-name="json"></path>
+									<text x="356.8" y="102.0" stroke="none" data-name="json">* members</text>
+									<path d="M345.3 85.2 L348.75 90 L348.75 103.33333333333333 L348.8 103.3 " fill="none" data-name="json"></path>
+									<path d="M343.4 96.7 L348.8 103.3 L354.1 96.7 L348.8 110.0 Z" data-name="json"></path>
+									<g fill="#33322E" data-name="json">
+											<path d="M344.2 74.5 L345.3 85.2 L335.6 80.7 L334.5 70.0 Z" data-name="json"></path>
+										</g>
+									<path d="M377.4 154.2 L384.25 161 L384.25 193.83333333333334 L384.3 193.8 " fill="none" data-name="json"></path>
+									<path d="M378.9 187.2 L384.3 193.8 L389.6 187.2 L384.3 200.5 Z" data-name="json"></path>
+									<g fill="#33322E" data-name="json">
+											<path d="M374.6 143.8 L377.4 154.2 L367.1 151.4 L364.3 141.0 Z" data-name="json"></path>
+										</g>
+									<path d="M320.1 154.2 L313.25 161 L313.25 216 L313.25 216 L313.25 271 L313.25 271 L316.41551045214254 284.50915023942537 L316.4 284.5 " fill="none" data-name="json"></path>
+									<path d="M309.7 279.2 L316.4 284.5 L320.1 276.8 L317.9 291.0 Z" data-name="json"></path>
+									<g fill="#33322E" data-name="json">
+											<path d="M330.4 151.4 L320.1 154.2 L322.9 143.8 L333.3 141.0 Z" data-name="json"></path>
+										</g>
+									<g stroke-dasharray="6 6" data-name="json">
+											<path d="M384.3 231.5 L384.25 271 L382.60544774257954 278.0183004788507 L382.6 278.0 " fill="none" data-name="json"></path>
+										</g>
+									<path d="M377.4 276.8 L382.6 278.0 L387.8 279.2 L379.6 291.0 Z" data-name="json"></path>
+									<g stroke-dasharray="6 6" data-name="json">
+											<path d="M493.3 231.5 L493.25 271 L442.45255587365574 324.2582199663748 L442.5 324.3 " fill="none" data-name="json"></path>
+										</g>
+									<path d="M438.6 320.6 L442.5 324.3 L446.3 327.9 L433.3 333.9 Z" data-name="json"></path>
+									<g stroke-dasharray="6 6" data-name="json">
+											<path d="M610.8 231.5 L610.75 271 L444.79253449282896 366.9639542913603 L444.8 367.0 " fill="none" data-name="json"></path>
+										</g>
+									<path d="M442.1 362.3 L444.8 367.0 L447.5 371.6 L433.3 373.6 Z" data-name="json"></path>
+									<g stroke-dasharray="6 6" data-name="json">
+											<path d="M713.3 231.5 L713.25 271 L445.5621846841554 382.2611907279848 L445.6 382.3 " fill="none" data-name="json"></path>
+										</g>
+									<path d="M443.5 377.3 L445.6 382.3 L447.6 387.2 L433.3 387.4 Z" data-name="json"></path>
+									<g data-name="Value">
+											<g fill="#fdf6e3" stroke="#33322E" data-name="Value">
+												<rect x="264.3" y="291.0" height="263.0" width="169.0" data-name="Value"></rect>
+											<path d="M264.3 322.0 L433.3 322.0" fill="none" data-name="Value"></path>
+											<path d="M264.3 523.0 L433.3 523.0" fill="none" data-name="Value"></path>
+											</g>
+										<g transform="translate(264.25, 291)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="italic" data-name="Value">
+												<g transform="translate(8, 8)" fill="#33322E" text-align="center" data-name="Value">
+													<text x="76.5" y="13.5" stroke="none" text-anchor="middle" data-name="Value">Value</text>
+												
+												</g>
+											</g>
+										<g transform="translate(264.25, 322)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="Value">
+												<g transform="translate(8, 8)" fill="#33322E" data-name="Value">
+													<g transform="translate(20, 20)" data-name="Value">
+														<g data-name="Visitor">
+															<g fill="#eee8d5" stroke="#33322E" data-name="Visitor">
+																<rect x="0.0" y="0.0" height="145.0" width="113.0" data-name="Visitor"></rect>
+															<path d="M0.0 31.0 L113.0 31.0" fill="none" data-name="Visitor"></path>
+															<path d="M0.0 39.0 L113.0 39.0" fill="none" data-name="Visitor"></path>
+															</g>
+														<g transform="translate(0, 0)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="italic" data-name="Visitor">
+																<g transform="translate(8, 8)" fill="#33322E" text-align="center" data-name="Visitor">
+																	<text x="48.5" y="13.5" stroke="none" text-anchor="middle" data-name="Visitor">Visitor</text>
+																
+																</g>
+															</g>
+														<g transform="translate(0, 31)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="Visitor">
+																<g transform="translate(8, 8)" fill="#33322E" data-name="Visitor">
+																	
+																</g>
+															</g>
+														<g transform="translate(0, 39)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="Visitor">
+																<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="Visitor">
+																	<text x="0.0" y="13.5" stroke="none" data-name="Visitor">visit(Array)</text>
+																<text x="0.0" y="28.5" stroke="none" data-name="Visitor">visit(Object)</text>
+																<text x="0.0" y="43.5" stroke="none" data-name="Visitor">visit(String)</text>
+																<text x="0.0" y="58.5" stroke="none" data-name="Visitor">visit(Number)</text>
+																<text x="0.0" y="73.5" stroke="none" data-name="Visitor">visit(Boolean)</text>
+																<text x="0.0" y="88.5" stroke="none" data-name="Visitor">visit(Null)</text>
+																
+																</g>
+															</g>
+														</g>
+													</g>
+												</g>
+											</g>
+										<g transform="translate(264.25, 523)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="Value">
+												<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="Value">
+													<text x="0.0" y="13.5" stroke="none" data-name="Value">accept(Visitor)</text>
+												
+												</g>
+											</g>
+										</g>
+									<g data-name="Array">
+											<g fill="#fdf6e3" stroke="#33322E" data-name="Array">
+												<rect x="0.0" y="181.0" height="70.0" width="214.0" data-name="Array"></rect>
+											<path d="M0.0 212.0 L214.0 212.0" fill="none" data-name="Array"></path>
+											<path d="M0.0 220.0 L214.0 220.0" fill="none" data-name="Array"></path>
+											</g>
+										<g transform="translate(0, 181)" font-family="Helvetica" font-size="12pt" font-weight="bold" font-style="normal" data-name="Array">
+												<g transform="translate(8, 8)" fill="#33322E" text-align="center" data-name="Array">
+													<text x="99.0" y="13.5" stroke="none" text-anchor="middle" data-name="Array">Array</text>
+												
+												</g>
+											</g>
+										<g transform="translate(0, 212)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="Array">
+												<g transform="translate(8, 8)" fill="#33322E" data-name="Array">
+													
+												</g>
+											</g>
+										<g transform="translate(0, 220)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="Array">
+												<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="Array">
+													<text x="0.0" y="13.5" stroke="none" data-name="Array">forEach(Consumer&lt;Value&gt;)</text>
+												
+												</g>
+											</g>
+										</g>
+									<g data-name="Object">
+											<g fill="#fdf6e3" stroke="#33322E" data-name="Object">
+												<rect x="172.5" y="0.0" height="70.0" width="274.0" data-name="Object"></rect>
+											<path d="M172.5 31.0 L446.5 31.0" fill="none" data-name="Object"></path>
+											<path d="M172.5 39.0 L446.5 39.0" fill="none" data-name="Object"></path>
+											</g>
+										<g transform="translate(172.5, 0)" font-family="Helvetica" font-size="12pt" font-weight="bold" font-style="normal" data-name="Object">
+												<g transform="translate(8, 8)" fill="#33322E" text-align="center" data-name="Object">
+													<text x="129.0" y="13.5" stroke="none" text-anchor="middle" data-name="Object">Object</text>
+												
+												</g>
+											</g>
+										<g transform="translate(172.5, 31)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="Object">
+												<g transform="translate(8, 8)" fill="#33322E" data-name="Object">
+													
+												</g>
+											</g>
+										<g transform="translate(172.5, 39)" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal" data-name="Object">
+												<g transform="translate(8, 8)" fill="#33322E" text-align="left" data-name="Object">
+													<text x="0.0" y="13.5" stroke="none" data-name="Object">forEach(BiConsumer&lt;String,Value&gt;)</text>
+												
+												</g>
+											</g>
+										</g>
+									<g data-name="Member">
+											<g fill="#fdf6e3" stroke="#33322E" data-name="Member">
+												<rect x="310.3" y="110.0" height="31.0" width="77.0" data-name="Member"></rect>
+											</g>
+										<g transform="translate(310.25, 110)" font-family="Helvetica" font-size="12pt" font-weight="bold" font-style="normal" data-name="Member">
+												<g transform="translate(8, 8)" fill="#33322E" text-align="center" data-name="Member">
+													<text x="30.5" y="13.5" stroke="none" text-anchor="middle" data-name="Member">Member</text>
+												
+												</g>
+											</g>
+										</g>
+									<g data-name="String">
+											<g fill="#fdf6e3" stroke="#33322E" data-name="String">
+												<rect x="353.3" y="200.5" height="31.0" width="62.0" data-name="String"></rect>
+											</g>
+										<g transform="translate(353.25, 200.5)" font-family="Helvetica" font-size="12pt" font-weight="bold" font-style="normal" data-name="String">
+												<g transform="translate(8, 8)" fill="#33322E" text-align="center" data-name="String">
+													<text x="23.0" y="13.5" stroke="none" text-anchor="middle" data-name="String">String</text>
+												
+												</g>
+											</g>
+										</g>
+									<g data-name="Number">
+											<g fill="#fdf6e3" stroke="#33322E" data-name="Number">
+												<rect x="455.3" y="200.5" height="31.0" width="76.0" data-name="Number"></rect>
+											</g>
+										<g transform="translate(455.25, 200.5)" font-family="Helvetica" font-size="12pt" font-weight="bold" font-style="normal" data-name="Number">
+												<g transform="translate(8, 8)" fill="#33322E" text-align="center" data-name="Number">
+													<text x="30.0" y="13.5" stroke="none" text-anchor="middle" data-name="Number">Number</text>
+												
+												</g>
+											</g>
+										</g>
+									<g data-name="Boolean">
+											<g fill="#fdf6e3" stroke="#33322E" data-name="Boolean">
+												<rect x="571.3" y="200.5" height="31.0" width="79.0" data-name="Boolean"></rect>
+											</g>
+										<g transform="translate(571.25, 200.5)" font-family="Helvetica" font-size="12pt" font-weight="bold" font-style="normal" data-name="Boolean">
+												<g transform="translate(8, 8)" fill="#33322E" text-align="center" data-name="Boolean">
+													<text x="31.5" y="13.5" stroke="none" text-anchor="middle" data-name="Boolean">Boolean</text>
+												
+												</g>
+											</g>
+										</g>
+									<g data-name="Null">
+											<g fill="#fdf6e3" stroke="#33322E" data-name="Null">
+												<rect x="690.3" y="200.5" height="31.0" width="46.0" data-name="Null"></rect>
+											</g>
+										<g transform="translate(690.25, 200.5)" font-family="Helvetica" font-size="12pt" font-weight="bold" font-style="normal" data-name="Null">
+												<g transform="translate(8, 8)" fill="#33322E" text-align="center" data-name="Null">
+													<text x="15.0" y="13.5" stroke="none" text-anchor="middle" data-name="Null">Null</text>
+												
+												</g>
+											</g>
+										</g>
+									</g>
+								</g>
+							</g>
+						</g>
+					</g>
+				</g>
+			</g>
+		</g>
+	</svg>
