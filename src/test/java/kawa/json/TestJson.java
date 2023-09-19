@@ -53,9 +53,9 @@ public class TestJson {
       .isEqualTo("true");
     assertThat(Json.FALSE.toString())
       .isEqualTo("false");
-    assertThat(Json.booleanValueOf(true).toString())
+    assertThat(Json.bool(true).toString())
       .isEqualTo("true");
-    assertThat(Json.booleanValueOf(false).toString())
+    assertThat(Json.bool(false).toString())
       .isEqualTo("false");
 
     assertThat(Json.array().with(Json.TRUE, Json.FALSE).toString())
@@ -68,26 +68,15 @@ public class TestJson {
       .isEqualTo("{\"true\":true,\"false\":false}");
   }
 
-  @Test void should_write_integer() throws Exception {
-    assertThat(Json.integer(42).toString())
+  @Test void should_write_number() throws Exception {
+    assertThat(Json.number(42).toString())
       .isEqualTo("42");
 
-    assertThat(Json.array().with(Json.integer(42)).toString())
+    assertThat(Json.array().with(Json.number(42)).toString())
       .isEqualTo("[42]");
 
-    assertThat(Json.object().with("forty-two", Json.integer(42)).toString())
-      .isEqualTo("{\"forty-two\":42}");
-  }
-
-  @Test void should_write_float() throws Exception {
-    assertThat(Json.number(42).toString())
-      .isEqualTo("42.0");
-
-    assertThat(Json.array().with(Json.number(42)).toString())
-      .isEqualTo("[42.0]");
-
     assertThat(Json.object().with("forty-two", new Json.Number(42)).toString())
-      .isEqualTo("{\"forty-two\":42.0}");
+      .isEqualTo("{\"forty-two\":42}");
   }
 
   @Test void should_access_object_members() throws Exception {
@@ -96,7 +85,6 @@ public class TestJson {
                                .with("object",  Json.NULL.or(Json.object()))
                                .with("array",   Json.NULL.or(Json.array()))
                                .with("title",   Json.NULL.or(Json.string("Doctor Who?")))
-                               .with("integer", Json.NULL.or(Json.integer(42)))
                                .with("number",  Json.NULL.or(Json.number(42)))
                                .with("boolean", Json.NULL.or(Json.FALSE.or(Json.FALSE.and(Json.TRUE))))
                                .with("null",    Json.NULL.or(null));
@@ -104,11 +92,10 @@ public class TestJson {
         .isFalse();
       object.forEach((key, value) -> {
         switch (value) {
-          case Json.Object  o -> { assertThat(key).isEqualTo("object");  assertThat(o.members()).isEmpty(); }
-          case Json.Array   a -> { assertThat(key).isEqualTo("array");   assertThat(a.values()).isEmpty(); }
-          case Json.String  s -> { assertThat(key).isEqualTo("title");   assertThat(s.value()).isEqualTo("Doctor Who?"); }
-          case Json.Integer i -> { assertThat(key).isEqualTo("integer"); assertThat(i.value()).isEqualTo(42); }
-          case Json.Number  n -> { assertThat(key).isEqualTo("number");  assertThat(n.value()).isEqualTo(42.0f); }
+          case Json.Object  o -> { assertThat(key).isEqualTo("object");  assertThat(o).isEmpty(); }
+          case Json.Array   a -> { assertThat(key).isEqualTo("array");   assertThat(a).isEmpty(); }
+          case Json.String  s -> { assertThat(key).isEqualTo("title");   assertThat(s).isEqualTo(Json.string("Doctor Who?")); }
+          case Json.Number  n -> { assertThat(key).isEqualTo("number");  assertThat(n).isEqualTo(Json.number(42)); }
           case Json.Boolean b -> { assertThat(key).isEqualTo("boolean"); assertThat(b).isEqualTo(Json.FALSE); }
           case Json.Null    ø -> { assertThat(key).isEqualTo("null");    assertThat(ø).isEqualTo(Json.NULL); }
         }
@@ -119,7 +106,6 @@ public class TestJson {
       Map<String, Json.Value> members = Map.of("object",  Json.NULL.or(Json.object()),
                                                "array",   Json.NULL.or(Json.array()),
                                                "title",   Json.NULL.or(Json.string("Doctor Who?")),
-                                               "integer", Json.NULL.or(Json.integer(42)),
                                                "number",  Json.NULL.or(Json.number(42)),
                                                "boolean", Json.NULL.or(Json.FALSE.or(Json.FALSE.and(Json.TRUE))),
                                                "null",    Json.NULL.or(null));
@@ -128,11 +114,10 @@ public class TestJson {
                                           (Json.Object o, Map.Entry<String, Json.Value> e) -> o.with(e.getKey(), e.getValue()),
                                           Json.Object::concat);
 
-      assertThat(object.getObject("object").members()).isEmpty();
-      assertThat(object.getArray("array").values()).isEmpty();
-      assertThat(object.getString("title").value()).isEqualTo("Doctor Who?");
-      assertThat(object.getInteger("integer").value()).isEqualTo(42);
-      assertThat(object.getNumber("number").value()).isEqualTo(42.0f);
+      assertThat(object.getObject("object")).isEmpty();
+      assertThat(object.getArray("array")).isEmpty();
+      assertThat(object.getString("title")).isEqualTo(Json.string("Doctor Who?"));
+      assertThat(object.getNumber("number")).isEqualTo(Json.number(42));
       assertThat(object.getBoolean("boolean")).isEqualTo(Json.FALSE);
       assertThat(object.get("null")).isEqualTo(Json.NULL);
     }
@@ -179,7 +164,6 @@ public class TestJson {
                              .with("kv",      Json.NULL.or(Json.array().with(Json.object().with("k", Json.string("key")).with("v", Json.string("value")),
                                                                              Json.object().with("k", Json.string("king")).with("v", Json.string("void")))))
                              .with("title",   Json.NULL.or(Json.string("Doctor Who?")))
-                             .with("integer", Json.NULL.or(Json.integer(42)))
                              .with("number",  Json.NULL.or(Json.number(42)))
                              .with("boolean", Json.NULL.or(Json.FALSE.or(Json.FALSE.and(Json.TRUE))))
                              .with("null",    Json.NULL.or(null));
@@ -208,8 +192,7 @@ public class TestJson {
                        }
                      ],
                      "title": "Doctor Who?",
-                     "integer": 42,
-                     "number": 42.0,
+                     "number": 42,
                      "boolean": false,
                      "null": null
                    }""");
@@ -221,7 +204,6 @@ public class TestJson {
                              Json.object(),
                              Json.array(),
                              Json.string("Doctor Who?"),
-                             Json.integer(42),
                              Json.number(42),
                              Json.TRUE.or(Json.FALSE).and(Json.TRUE),
                              Json.NULL
@@ -230,11 +212,10 @@ public class TestJson {
       .isFalse();
     array.forEach(value -> {
       switch (value) {
-        case Json.Object  o -> assertThat(o.members()).isEmpty();
-        case Json.Array   a -> assertThat(a.values()).isEmpty();
-        case Json.String  s -> assertThat(s.value()).isEqualTo("Doctor Who?");
-        case Json.Integer i -> assertThat(i.value()).isEqualTo(42);
-        case Json.Number  n -> assertThat(n.value()).isEqualTo(42.0f);
+        case Json.Object  o -> assertThat(o).isEmpty();
+        case Json.Array   a -> assertThat(a).isEmpty();
+        case Json.String  s -> assertThat(s).isEqualTo(Json.string("Doctor Who?"));
+        case Json.Number  n -> assertThat(n).isEqualTo(Json.number(42));
         case Json.Boolean b -> assertThat(b).isEqualTo(Json.TRUE);
         case Json.Null    ø -> assertThat(ø).isEqualTo(Json.NULL);
       }

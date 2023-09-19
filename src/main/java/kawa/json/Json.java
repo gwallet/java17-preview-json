@@ -1,10 +1,12 @@
 package kawa.json;
 
+import java.io.Serial;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Spliterator;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -15,6 +17,41 @@ import static java.util.stream.Collectors.joining;
  * Conforms to <a href="https://www.ietf.org/rfc/rfc4627.txt?number=4627">RFC 4627</a>.
  */
 public final class Json {
+
+  public interface Parser {
+
+    Value parse() throws Exception;
+
+    class Exception extends RuntimeException {
+
+      @Serial private static final long serialVersionUID = -7034897190745766939L;
+
+      public Exception() {
+        super();
+      }
+
+      public Exception(java.lang.String message) {
+        super(message);
+      }
+
+      public Exception(java.lang.String message, Throwable cause) {
+        super(message, cause);
+      }
+
+      public Exception(Throwable cause) {
+        super(cause);
+      }
+
+      protected Exception(java.lang.String message,
+                          Throwable cause,
+                          boolean enableSuppression,
+                          boolean writableStackTrace) {
+        super(message, cause, enableSuppression, writableStackTrace);
+      }
+
+    }
+
+  }
 
   public sealed interface Value {}
 
@@ -30,7 +67,19 @@ public final class Json {
   /**
    * Represents a JSON document containing {@code key -> value} pairs.
    */
-  public record Object(Member... members) implements Value {
+  public record Object(Member... members) implements Value, Iterable<Object.Member> {
+
+    @Override public Iterator<Member> iterator() {
+      return Arrays.stream(members).iterator();
+    }
+
+    @Override public Spliterator<Member> spliterator() {
+      return Arrays.spliterator(members);
+    }
+
+    public void forEach(BiConsumer<java.lang.String, Value> consumer) {
+      this.forEach(member -> consumer.accept(member.key.value, member.value));
+    }
 
     public static Object concat(Object a, Object b) {
       Member[] m = new Member[a.members.length + b.members.length];
@@ -48,6 +97,19 @@ public final class Json {
         return key + ":" + value.toString();
       }
 
+      @Override public boolean equals(java.lang.Object obj) {
+        if (obj instanceof Member that) {
+          return Objects.equals(this.key, that.key)
+                 && Objects.equals(this.value, that.value);
+        }
+
+        return false;
+      }
+
+      @Override public int hashCode() {
+        return Objects.hash(key, value);
+      }
+
     }
 
     /**
@@ -61,9 +123,23 @@ public final class Json {
      * To avoid null {@code value}, you can use {@code Json.NULL.or(nullableValue)} which deals with null safety.
      */
     public Object with(java.lang.String key, Value value) {
+      return with(Json.string(key), value);
+    }
+
+    /**
+     * Creates a new {@code Json.Object}, clone of this with one more property.
+     *
+     * @param key   new property name.
+     * @param value new property value.
+     * @return Returns a new {@code Json.Object}, clone of this with one more property in the end.
+     *
+     * @throws java.lang.NullPointerException if {@code key} or {@code value} was null.
+     * To avoid null {@code value}, you can use {@code Json.NULL.or(nullableValue)} which deals with null safety.
+     */
+    public Object with(String key, Value value) {
       Member[] m = new Member[members.length + 1];
       System.arraycopy(members, 0, m, 0, members.length);
-      m[members.length] = new Object.Member(new String(Objects.requireNonNull(key, "key must not be null.")),
+      m[members.length] = new Object.Member(Objects.requireNonNull(key, "key must not be null."),
                                             Objects.requireNonNull(value, "value must not be null, see Json.NULL#or(Json.Value)"));
       return new Object(m);
     }
@@ -99,11 +175,6 @@ public final class Json {
         .orElse(null);
     }
 
-    public Json.Integer getInteger(java.lang.String key) {
-      return _get(key, Json.Integer.class)
-        .orElse(null);
-    }
-
     public Json.Number getNumber(java.lang.String key) {
       return _get(key, Json.Number.class)
         .orElse(null);
@@ -118,9 +189,16 @@ public final class Json {
       return members == null || members.length == 0;
     }
 
-    public void forEach(BiConsumer<java.lang.String, Value> consumer) {
-      Arrays.stream(members)
-            .forEach(member -> consumer.accept(member.key.value, member.value));
+    @Override public boolean equals(java.lang.Object obj) {
+      if (obj instanceof Object that) {
+        return Arrays.equals(this.members, that.members);
+      }
+
+      return false;
+    }
+
+    @Override public int hashCode() {
+      return Arrays.hashCode(this.members);
     }
 
     @Override public java.lang.String toString() {
@@ -144,15 +222,15 @@ public final class Json {
       }
 
       return Stream.of(members)
-            .map(member -> {
-              StringBuilder buffer = new StringBuilder();
-              switch (member.value) {
-                case Array  a -> buffer.append(indent).append(indentation).append(member.key).append(": ").append(a.toPrettyString(indent + indentation, indentation));
-                case Object o -> buffer.append(indent).append(indentation).append(member.key).append(": ").append(o.toPrettyString(indent + indentation, indentation));
-                default -> buffer.append(indent).append(indentation).append(member.key).append(": ").append(member.value);
-              }
-              return buffer.toString();
-            })
+        .map(member -> {
+          StringBuilder buffer = new StringBuilder();
+          switch (member.value) {
+            case Array  a -> buffer.append(indent).append(indentation).append(member.key).append(": ").append(a.toPrettyString(indent + indentation, indentation));
+            case Object o -> buffer.append(indent).append(indentation).append(member.key).append(": ").append(o.toPrettyString(indent + indentation, indentation));
+            default -> buffer.append(indent).append(indentation).append(member.key).append(": ").append(member.value);
+          }
+          return buffer.toString();
+        })
         .collect(joining(",\n", "{\n", "\n" + indent + "}"));
     }
 
@@ -168,7 +246,15 @@ public final class Json {
   /**
    * Represents an array of {@code Json.Value}s.
    */
-  public record Array(Value... values) implements Value {
+  public record Array(Value... values) implements Value, Iterable<Value> {
+
+    @Override public Iterator<Value> iterator() {
+      return Arrays.stream(values).iterator();
+    }
+
+    @Override public Spliterator<Value> spliterator() {
+      return Arrays.spliterator(values);
+    }
 
     /**
      * Creates a new {@code Json.Array} clone of this, but with one more element in the end.
@@ -208,9 +294,16 @@ public final class Json {
       return values == null || values.length == 0;
     }
 
-    public void forEach(Consumer<Value> consumer) {
-      Stream.of(values)
-            .forEach(consumer);
+    @Override public boolean equals(java.lang.Object obj) {
+      if (obj instanceof Array that) {
+        return Arrays.equals(this.values, that.values);
+      }
+
+      return false;
+    }
+
+    @Override public int hashCode() {
+      return Arrays.hashCode(this.values);
     }
 
     @Override public java.lang.String toString() {
@@ -228,22 +321,22 @@ public final class Json {
       }
     }
 
-    java.lang.String toPrettyString(java.lang.String indent, java.lang.String indentation) {
+    private java.lang.String toPrettyString(java.lang.String indent, java.lang.String indentation) {
       if (isEmpty()) {
         return "[]";
       }
 
       return Stream.of(values)
-                   .map(value -> {
-                     StringBuilder buffer = new StringBuilder();
-                     switch (value) {
-                       case Array  a -> buffer.append(indent).append(indentation).append(a.toPrettyString(indent + indentation, indentation));
-                       case Object o -> buffer.append(indent).append(indentation).append(o.toPrettyString(indent + indentation, indentation));
-                       default -> buffer.append(indent).append(indentation).append(value);
-                     }
-                     return buffer.toString();
-                   })
-                   .collect(joining(",\n", "[\n", "\n" + indent + "]"));
+        .map(value -> {
+          StringBuilder buffer = new StringBuilder();
+          switch (value) {
+            case Array  a -> buffer.append(indent).append(indentation).append(a.toPrettyString(indent + indentation, indentation));
+            case Object o -> buffer.append(indent).append(indentation).append(o.toPrettyString(indent + indentation, indentation));
+            default -> buffer.append(indent).append(indentation).append(value);
+          }
+          return buffer.toString();
+        })
+        .collect(joining(",\n", "[\n", "\n" + indent + "]"));
     }
 
   }
@@ -252,7 +345,7 @@ public final class Json {
    * @return Creates and returns a new {@code Json.String}.
    */
   public static String string(java.lang.String string) {
-    return new String(string);
+    return new String(Objects.requireNonNull(string, "string must not be null."));
   }
 
   /**
@@ -264,22 +357,16 @@ public final class Json {
       return "\"" + value + "\"";
     }
 
-  }
+    @Override public boolean equals(java.lang.Object obj) {
+      if (obj instanceof String that) {
+        return Objects.equals(this.value, that.value);
+      }
 
-  /**
-   * @return Creates and returns a new {@code Json.Integer}.
-   */
-  public static Integer integer(int i) {
-    return new Integer(i);
-  }
+      return false;
+    }
 
-  /**
-   * Represents a {@code Json.Integer}.
-   */
-  public record Integer(int value) implements Value {
-
-    @Override public java.lang.String toString() {
-      return "" + value;
+    @Override public int hashCode() {
+      return Objects.hashCode(value);
     }
 
   }
@@ -287,22 +374,40 @@ public final class Json {
   /**
    * @return Creates and returns a new {@code Json.Number}.
    */
-  public static Number number(float f) {
-    return new Number(f);
+  public static Number number(java.lang.Number n) {
+    if (n instanceof Integer i) {
+      return new Number((long) i);
+    }
+    if (n instanceof Float f) {
+      return new Number((double) f);
+    }
+    return new Number(Objects.requireNonNull(n, "number must not be null"));
   }
 
   /**
-   * Represents a {@code Json.Number} backed by a {@code float}.
+   * Represents a {@code Json.Number} backed by a {@code java.lang.Number}.
    */
-  public record Number(float value) implements Value {
+  public record Number(java.lang.Number value) implements Value {
 
     @Override public java.lang.String toString() {
       return "" + value;
     }
 
+    @Override public boolean equals(java.lang.Object obj) {
+      if (obj instanceof Number that) {
+        return Objects.equals(this.value, that.value);
+      }
+
+      return false;
+    }
+
+    @Override public int hashCode() {
+      return Objects.hashCode(value);
+    }
+
   }
 
-  public static Boolean booleanValueOf(boolean bool) {
+  public static Boolean bool(boolean bool) {
     return bool
       ? TRUE
       : FALSE;
@@ -334,8 +439,11 @@ public final class Json {
     }
 
     @Override public boolean equals(java.lang.Object obj) {
-      return ( obj instanceof Boolean )
-             && ( (Boolean) obj ).value == this.value;
+      if (obj instanceof Boolean that) {
+        return this.value == that.value;
+      }
+
+      return false;
     }
 
     @Override public java.lang.String toString() {
