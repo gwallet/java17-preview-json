@@ -53,7 +53,39 @@ public final class Json {
 
   }
 
-  public sealed interface Value {}
+  public sealed interface Value {
+
+    interface Visitor {
+
+      default void visit(Object object) {}
+
+      default void visit(Array array) {}
+
+      default void visit(String string) {}
+
+      default void visit(Number number) {}
+
+      default void visit(Boolean bool) {}
+
+      default void visit(Null nil) {}
+
+    }
+
+    default void accept(Visitor visitor) {
+      //  Ensure visitors have all `visit` methods
+      switch (this) {
+        // @formatter:off
+        case Object object -> visitor.visit(object);
+        case Array   array -> visitor.visit(array);
+        case String string -> visitor.visit(string);
+        case Number number -> visitor.visit(number);
+        case Boolean  bool -> visitor.visit(bool);
+        case Null      nil -> visitor.visit(nil);
+        // @formatter:on
+      }
+    }
+
+  }
 
   /**
    * @return Creates and returns a new empty {@code Json.Object} document.
@@ -117,6 +149,7 @@ public final class Json {
      *
      * @param key   new property name.
      * @param value new property value.
+     *
      * @return Returns a new {@code Json.Object}, clone of this with one more property in the end.
      *
      * @throws java.lang.NullPointerException if {@code key} or {@code value} was null.
@@ -131,6 +164,7 @@ public final class Json {
      *
      * @param key   new property name.
      * @param value new property value.
+     *
      * @return Returns a new {@code Json.Object}, clone of this with one more property in the end.
      *
      * @throws java.lang.NullPointerException if {@code key} or {@code value} was null.
@@ -157,7 +191,7 @@ public final class Json {
 
     private <V extends Value> Optional<V> _get(java.lang.String key, Class<V> type) {
       return _get(key).filter(v -> v.getClass().isAssignableFrom(type))
-                     .map(type::cast);
+                      .map(type::cast);
     }
 
     public Json.Object getObject(java.lang.String key) {
@@ -221,6 +255,7 @@ public final class Json {
         return "{}";
       }
 
+      // @formatter:off
       return Stream.of(members)
         .map(member -> {
           StringBuilder buffer = new StringBuilder();
@@ -232,6 +267,7 @@ public final class Json {
           return buffer.toString();
         })
         .collect(joining(",\n", "{\n", "\n" + indent + "}"));
+      // @formatter:on
     }
 
   }
@@ -260,6 +296,7 @@ public final class Json {
      * Creates a new {@code Json.Array} clone of this, but with one more element in the end.
      *
      * @param value New value to append in the end of this {@code Json.Array}.
+     *
      * @return Returns a new {@code Json.Array} clone of this, but with one more element in the end.
      *
      * @throws java.lang.NullPointerException if the given value was null.
@@ -276,14 +313,17 @@ public final class Json {
      * Creates a new {@code Json.Array} clone of this, but with one more element in the end.
      *
      * @param values New values to append in the end of this {@code Json.Array}.
+     *
      * @return Returns a new {@code Json.Array} clone of this, but with all elements in the end.
      *
      * @throws java.lang.NullPointerException if one of the given values was null.
      * To avoid null {@code value}, you can use {@code Json.NULL.or(nullableValue)} which deals with null safety.
      */
     public Array with(Value... values) {
+      // @formatter:off
       IntStream.range(0, values.length)
                .forEach(index -> Objects.requireNonNull(values[index], "Expecting non-null values in array at index " + index));
+      // @formatter:on
       Value[] v = new Value[this.values.length + values.length];
       System.arraycopy(this.values, 0, v, 0, this.values.length);
       System.arraycopy(values, 0, v, this.values.length, values.length);
@@ -326,6 +366,7 @@ public final class Json {
         return "[]";
       }
 
+      // @formatter:off
       return Stream.of(values)
         .map(value -> {
           StringBuilder buffer = new StringBuilder();
@@ -337,6 +378,7 @@ public final class Json {
           return buffer.toString();
         })
         .collect(joining(",\n", "[\n", "\n" + indent + "]"));
+      // @formatter:on
     }
 
   }

@@ -1,7 +1,10 @@
 package kawa.json;
 
+import org.assertj.core.api.Condition;
 import org.junit.jupiter.api.Test;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -220,6 +223,129 @@ public class TestJson {
         case Json.Null    ø -> assertThat(ø).isEqualTo(Json.NULL);
       }
     });
+  }
+
+  @Test void should_visit_object() throws Exception {
+    // Given
+    Json.Object object = Json.object()
+                             .with("object",  Json.NULL.or(Json.object().with("sub-title", Json.string("EXTERMINATE!"))))
+                             .with("array",   Json.NULL.or(Json.array().with(Json.string("T"),
+                                                                             Json.string("A"),
+                                                                             Json.string("R"),
+                                                                             Json.string("D"),
+                                                                             Json.string("I"),
+                                                                             Json.string("S"))))
+                             .with("kv",      Json.NULL.or(Json.array().with(Json.object().with("k", Json.string("key")).with("v", Json.string("value")),
+                                                                             Json.object().with("k", Json.string("king")).with("v", Json.string("void")))))
+                             .with("title",   Json.NULL.or(Json.string("Doctor Who?")))
+                             .with("number",  Json.NULL.or(Json.number(42)))
+                             .with("boolean", Json.NULL.or(Json.FALSE.or(Json.FALSE.and(Json.TRUE))))
+                             .with("null",    Json.NULL.or(null));
+    final Map<Class<? extends Json.Value>, Boolean> visited = new HashMap<>();
+
+    // When
+    object.accept(new Json.Value.Visitor() {
+      @Override public void visit(Json.Object object) {
+        visited.put(Json.Object.class, Boolean.TRUE);
+        object.forEach((__, v) -> v.accept(this));
+      }
+
+      @Override public void visit(Json.Array array) {
+        visited.put(Json.Array.class, Boolean.TRUE);
+        array.forEach(v -> v.accept(this));
+      }
+
+      @Override public void visit(Json.String string) {
+        visited.put(Json.String.class, Boolean.TRUE);
+      }
+
+      @Override public void visit(Json.Number number) {
+        visited.put(Json.Number.class, Boolean.TRUE);
+      }
+
+      @Override public void visit(Json.Boolean bool) {
+        visited.put(Json.Boolean.class, Boolean.TRUE);
+      }
+
+      @Override public void visit(Json.Null nil) {
+        visited.put(Json.Null.class, Boolean.TRUE);
+      }
+    });
+
+    // Then
+    assertThat(visited)
+      .containsOnlyKeys(List.of(
+        Json.Object.class,
+        Json.Array.class,
+        Json.String.class,
+        Json.Number.class,
+        Json.Boolean.class,
+        Json.Null.class
+      ))
+      .hasValueSatisfying(new Condition<>("visited") {
+        @Override public boolean matches(Boolean value) {
+          return value;
+        }
+      });
+  }
+
+  @Test void should_visit_array() throws Exception {
+    // Given
+    Json.Array array = Json.array()
+                           .with(
+                             Json.object(),
+                             Json.array(),
+                             Json.string("Doctor Who?"),
+                             Json.number(42),
+                             Json.TRUE.or(Json.FALSE).and(Json.TRUE),
+                             Json.NULL
+                           );
+    final Map<Class<? extends Json.Value>, Boolean> visited = new HashMap<>();
+
+    // When
+    array.accept(new Json.Value.Visitor() {
+      @Override public void visit(Json.Object object) {
+        visited.put(Json.Object.class, Boolean.TRUE);
+        object.forEach((__, v) -> v.accept(this));
+      }
+
+      @Override public void visit(Json.Array array) {
+        visited.put(Json.Array.class, Boolean.TRUE);
+        array.forEach(v -> v.accept(this));
+      }
+
+      @Override public void visit(Json.String string) {
+        visited.put(Json.String.class, Boolean.TRUE);
+      }
+
+      @Override public void visit(Json.Number number) {
+        visited.put(Json.Number.class, Boolean.TRUE);
+      }
+
+      @Override public void visit(Json.Boolean bool) {
+        visited.put(Json.Boolean.class, Boolean.TRUE);
+      }
+
+      @Override public void visit(Json.Null nil) {
+        visited.put(Json.Null.class, Boolean.TRUE);
+      }
+    });
+
+    // Then
+    assertThat(visited)
+      .containsOnlyKeys(List.of(
+        Json.Object.class,
+        Json.Array.class,
+        Json.String.class,
+        Json.Number.class,
+        Json.Boolean.class,
+        Json.Null.class
+      ))
+      .hasValueSatisfying(new Condition<>("visited") {
+        @Override public boolean matches(Boolean value) {
+          return value;
+        }
+      });
   }
 
 }
