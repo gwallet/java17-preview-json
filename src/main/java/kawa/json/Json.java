@@ -1,5 +1,6 @@
 package kawa.json;
 
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiConsumer;
@@ -15,7 +16,7 @@ import static java.util.stream.Collectors.joining;
  */
 public final class Json {
 
-  sealed interface Value {}
+  public sealed interface Value {}
 
   /**
    * @return Creates and returns a new empty {@code Json.Object} document.
@@ -71,7 +72,7 @@ public final class Json {
       return _get(key).orElse(Json.NULL);
     }
 
-    public Optional<Value> _get(java.lang.String key) {
+    private Optional<Value> _get(java.lang.String key) {
       return Stream.of(members)
                    .filter(member -> member.key.equals(Json.string(key)))
                    .findFirst()
@@ -118,12 +119,12 @@ public final class Json {
     }
 
     public void forEach(BiConsumer<java.lang.String, Value> consumer) {
-      Stream.of(members)
+      Arrays.stream(members)
             .forEach(member -> consumer.accept(member.key.value, member.value));
     }
 
     @Override public java.lang.String toString() {
-      return Stream.of(members)
+      return Arrays.stream(members)
                    .map(Member::toString)
                    .collect(joining(",", "{", "}"));
     }
@@ -137,7 +138,7 @@ public final class Json {
       }
     }
 
-    java.lang.String toPrettyString(java.lang.String indent, java.lang.String indentation) {
+    private java.lang.String toPrettyString(java.lang.String indent, java.lang.String indentation) {
       if (isEmpty()) {
         return "{}";
       }
